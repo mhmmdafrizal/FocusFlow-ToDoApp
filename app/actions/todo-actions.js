@@ -5,7 +5,7 @@ import { todoSchema } from "../../validations/todo-schema";
 
 export async function addTodo(formData) {
   try {
-    const db = connectDB();
+    const sql = await connectDB();
 
     // 🔹 get data from form
     const text = formData.get("text");
@@ -19,25 +19,17 @@ export async function addTodo(formData) {
     });
 
     // 🔹 save to DB
-    const result = db
-      .prepare(
-        "INSERT INTO todos (text, description, completed, updated_at) VALUES (?, ?, 0, datetime('now'))"
-      )
-      .run(validatedData.text, validatedData.description ?? "");
-
-    const todo = db
-      .prepare(
-        "SELECT id AS _id, text, description, completed, created_at, updated_at FROM todos WHERE id = ?"
-      )
-      .get(result.lastInsertRowid);
+    const rows = await sql`
+      INSERT INTO todos (text, description)
+      VALUES (${validatedData.text}, ${validatedData.description ?? ""})
+      RETURNING id, text, description, completed, created_at, updated_at
+    `;
+    const row = rows[0];
 
     return {
       success: true,
       message: "Todo added successfully",
-      data: {
-        ...todo,
-        completed: !!todo.completed,
-      },
+      data: { _id: row.id, text: row.text, description: row.description, completed: row.completed },
     };
   } catch (error) {
     return {
@@ -49,18 +41,22 @@ export async function addTodo(formData) {
 
 export async function getTodos() {
   try {
-    const db = connectDB();
+    const sql = await connectDB();
 
-    const todos = db
-      .prepare(
-        "SELECT id AS _id, text, description, completed, created_at, updated_at FROM todos ORDER BY created_at DESC, id DESC"
-      )
-      .all()
-      .map((todo) => ({ ...todo, completed: !!todo.completed }));
+    const rows = await sql`
+      SELECT id, text, description, completed
+      FROM todos
+      ORDER BY created_at DESC, id DESC
+    `;
 
     return {
       success: true,
-      data: todos,
+      data: rows.map((r) => ({
+        _id: r.id,
+        text: r.text,
+        description: r.description,
+        completed: r.completed,
+      })),
     };
   } catch (error) {
     return {
@@ -72,8 +68,8 @@ export async function getTodos() {
 
 export async function deleteTodo(id) {
   try {
-    const db = connectDB();
-    db.prepare("DELETE FROM todos WHERE id = ?").run(id);
+    const sql = await connectDB();
+    await sql`DELETE FROM todos WHERE id = ${id}::int`;
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -82,10 +78,12 @@ export async function deleteTodo(id) {
 
 export async function toggleTodo(id) {
   try {
-    const db = connectDB();
-    db.prepare(
-      "UPDATE todos SET completed = 1 - completed, updated_at = datetime('now') WHERE id = ?"
-    ).run(id);
+    const sql = await connectDB();
+    await sql`
+      UPDATE todos
+      SET completed = NOT completed, updated_at = NOW()
+      WHERE id = ${id}::int
+    `;
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
