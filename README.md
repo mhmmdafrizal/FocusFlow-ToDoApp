@@ -45,7 +45,7 @@
 ## 📸 Screenshots
 
 
-![Home view](.public/screenshots/screenshot.png)
+![Home view](./public/screenshots/picture.png)
 
 
 ---
