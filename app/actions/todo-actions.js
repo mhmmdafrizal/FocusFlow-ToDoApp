@@ -1,12 +1,11 @@
 "use server";
 
 import { connectDB } from "../../lib/db";
-import { Todo } from "../../models/todo";
 import { todoSchema } from "../../validations/todo-schema";
 
 export async function addTodo(formData) {
   try {
-    await connectDB();
+    const db = connectDB();
 
     // 🔹 get data from form
     const text = formData.get("text");
@@ -20,13 +19,25 @@ export async function addTodo(formData) {
     });
 
     // 🔹 save to DB
-    const newTodo = await Todo.create(validatedData);
+    const result = db
+      .prepare(
+        "INSERT INTO todos (text, description, completed, updated_at) VALUES (?, ?, 0, datetime('now'))"
+      )
+      .run(validatedData.text, validatedData.description ?? "");
 
-    // 🔹 return clean data
+    const todo = db
+      .prepare(
+        "SELECT id AS _id, text, description, completed, created_at, updated_at FROM todos WHERE id = ?"
+      )
+      .get(result.lastInsertRowid);
+
     return {
       success: true,
       message: "Todo added successfully",
-      data: JSON.parse(JSON.stringify(newTodo)),
+      data: {
+        ...todo,
+        completed: !!todo.completed,
+      },
     };
   } catch (error) {
     return {
@@ -35,15 +46,21 @@ export async function addTodo(formData) {
     };
   }
 }
+
 export async function getTodos() {
   try {
-    await connectDB();
+    const db = connectDB();
 
-    const todos = await Todo.find().sort({ createdAt: -1 });
+    const todos = db
+      .prepare(
+        "SELECT id AS _id, text, description, completed, created_at, updated_at FROM todos ORDER BY created_at DESC, id DESC"
+      )
+      .all()
+      .map((todo) => ({ ...todo, completed: !!todo.completed }));
 
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(todos)),
+      data: todos,
     };
   } catch (error) {
     return {
@@ -52,12 +69,11 @@ export async function getTodos() {
     };
   }
 }
+
 export async function deleteTodo(id) {
   try {
-    await connectDB();
-
-    await Todo.findByIdAndDelete(id);
-
+    const db = connectDB();
+    db.prepare("DELETE FROM todos WHERE id = ?").run(id);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -66,13 +82,10 @@ export async function deleteTodo(id) {
 
 export async function toggleTodo(id) {
   try {
-    await connectDB();
-
-    const todo = await Todo.findById(id);
-
-    todo.completed = !todo.completed;
-    await todo.save();
-
+    const db = connectDB();
+    db.prepare(
+      "UPDATE todos SET completed = 1 - completed, updated_at = datetime('now') WHERE id = ?"
+    ).run(id);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };

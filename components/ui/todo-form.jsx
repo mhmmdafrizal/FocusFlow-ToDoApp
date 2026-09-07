@@ -38,26 +38,26 @@ export default function TodoForm() {
     <Card
       className="
         w-full relative overflow-hidden
-        bg-white/70 backdrop-blur-xl
-        border border-amber-200/50
-        shadow-[0_8px_32px_rgba(45,31,14,0.10)]
+        bg-sage-pale/60 backdrop-blur-xl
+        border border-oat/80
+        shadow-[0_8px_32px_rgba(45,58,52,0.04)]
         rounded-2xl
         transition-shadow duration-300
-        hover:shadow-[0_12px_40px_rgba(45,31,14,0.14)]
+        hover:shadow-[0_12px_40px_rgba(45,58,52,0.08)]
       "
     >
       {/* Subtle top gradient accent */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-70 rounded-t-2xl" />
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-terra to-transparent opacity-70 rounded-t-2xl" />
 
       {/* Soft inner glow */}
-      <div className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 rounded-full bg-amber-200/20 blur-2xl" />
+      <div className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 rounded-full bg-terra-pale/40 blur-2xl" />
 
       <CardHeader className="pb-3 pt-6 px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-['Fraunces',Georgia,serif] text-xl font-semibold text-[#2d1f0e] tracking-tight flex items-center gap-2">
+          <CardTitle className="font-serif text-xl font-semibold text-forest tracking-tight flex items-center gap-2">
             <span
-              className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-200/60
-                         flex items-center justify-center text-amber-500 shadow-sm"
+              className="w-8 h-8 rounded-xl bg-terra-pale border border-terra/30
+                         flex items-center justify-center text-terra shadow-sm"
             >
               <Sparkles size={14} />
             </span>
@@ -65,7 +65,7 @@ export default function TodoForm() {
           </CardTitle>
 
           {isReady && (
-            <span className="text-[10px] font-semibold tracking-widest uppercase text-amber-500 animate-pulse">
+            <span className="text-[10px] font-semibold tracking-widest uppercase text-terra animate-pulse">
               Ready
             </span>
           )}
@@ -77,28 +77,28 @@ export default function TodoForm() {
 
           {/* Title field */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#9b7050]">
+            <label className="text-[11px] font-bold tracking-[0.08em] uppercase text-forest-light">
               Title
             </label>
             <div className="relative">
               <Input
-                placeholder="What needs to be done?"
+                placeholder="What's on your mind? (e.g., Design logo...)"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 onFocus={() => setFocused("title")}
                 onBlur={() => setFocused(null)}
                 className="
-                  bg-[#faf6f0] border-[1.5px] border-[rgba(45,31,14,0.10)]
-                  text-[#2d1f0e] placeholder:text-[#9b7050]/50
+                  bg-cream border-[1.5px] border-oat
+                  text-forest placeholder:text-forest-light/50
                   rounded-xl px-4 py-2.5 text-sm font-medium
                   outline-none transition-all duration-200
-                  focus:border-amber-400 focus:bg-white
-                  focus:shadow-[0_0_0_3px_rgba(232,135,58,0.15),0_2px_8px_rgba(45,31,14,0.05)]
+                  focus:border-terra focus:bg-oat
+                  focus:shadow-[0_0_0_3px_rgba(217,138,108,0.15),0_2px_8px_rgba(45,58,52,0.05)]
                 "
               />
               {/* character count */}
               {title.length > 0 && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-[#9b7050]/50 font-medium tabular-nums">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-forest-light/50 font-medium tabular-nums">
                   {title.length}
                 </span>
               )}
@@ -107,30 +107,30 @@ export default function TodoForm() {
 
           {/* Description field */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold tracking-[0.08em] uppercase text-[#9b7050]">
+            <label className="text-[11px] font-bold tracking-[0.08em] uppercase text-forest-light">
               Description{" "}
-              <span className="normal-case font-normal tracking-normal opacity-60">(optional)</span>
+              {/* <span className="normal-case font-normal tracking-normal opacity-60">(optional)</span> */}
             </label>
             <Textarea
-              placeholder="Add more context or details..."
+              placeholder="Break it down into steps, drop a link, or jot down notes..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               onFocus={() => setFocused("desc")}
               onBlur={() => setFocused(null)}
               rows={3}
               className="
-                bg-[#faf6f0] border-[1.5px] border-[rgba(45,31,14,0.10)]
-                text-[#2d1f0e] placeholder:text-[#9b7050]/50
+                bg-cream border-[1.5px] border-oat
+                text-forest placeholder:text-forest-light/50
                 rounded-xl px-4 py-2.5 text-sm leading-relaxed resize-none
                 outline-none transition-all duration-200
-                focus:border-amber-400 focus:bg-white
-                focus:shadow-[0_0_0_3px_rgba(232,135,58,0.15),0_2px_8px_rgba(45,31,14,0.05)]
+                focus:border-terra focus:bg-oat
+                focus:shadow-[0_0_0_3px_rgba(217,138,108,0.15),0_2px_8px_rgba(45,58,52,0.05)]
               "
             />
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-amber-200/60 to-transparent" />
+          <div className="h-px bg-gradient-to-r from-transparent via-terra/25 to-transparent" />
 
           {/* Submit */}
           <Button
@@ -138,13 +138,13 @@ export default function TodoForm() {
             disabled={isPending || !isReady}
             className="
               w-full flex items-center justify-center gap-2
-              bg-gradient-to-br from-amber-500 to-amber-400
-              hover:from-amber-500 hover:to-amber-500
-              disabled:from-[#d4b896] disabled:to-[#d4b896]
+              bg-gradient-to-br from-terra to-terra-soft
+              hover:from-terra hover:to-terra
+              disabled:from-oat disabled:to-oat disabled:text-forest-light
               text-white font-semibold text-sm tracking-wide
               rounded-xl py-2.5 px-4
-              shadow-[0_4px_18px_rgba(232,135,58,0.35)]
-              hover:shadow-[0_8px_24px_rgba(232,135,58,0.45)]
+              shadow-[0_4px_18px_rgba(217,138,108,0.35)]
+              hover:shadow-[0_8px_24px_rgba(217,138,108,0.45)]
               hover:-translate-y-0.5
               disabled:shadow-none disabled:cursor-not-allowed disabled:opacity-70
               transition-all duration-200 active:translate-y-0
