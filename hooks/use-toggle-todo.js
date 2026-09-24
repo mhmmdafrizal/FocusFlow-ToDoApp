@@ -10,7 +10,7 @@ export function useToggleTodo() {
     mutationFn: toggleTodo,
 
     onSuccess: () => {
-      queryClient.invalidateQueries(["todos"]);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }

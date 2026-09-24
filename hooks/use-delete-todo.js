@@ -10,7 +10,7 @@ export function useDeleteTodo() {
     mutationFn: deleteTodo,
 
     onSuccess: () => {
-      queryClient.invalidateQueries(["todos"]);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }
