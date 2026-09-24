@@ -3,7 +3,7 @@
 > Master your day, one intentional task at a time. A modern, full-stack todo app — clean UI, optimistic updates, and production-grade architecture.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/JavaScript-ES2024-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![TypeScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?style=flat-square&logo=reactquery&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-v4-3B82F6?style=flat-square)
 ![Zustand](https://img.shields.io/badge/Zustand-v5-F59E0B?style=flat-square)
@@ -53,7 +53,7 @@
 ## 📁 Project Structure
 
 ```
-nextjs-todo-app/
+FocusFlow/
 ├── app/
 │   ├── actions/
 │   │   └── todo-actions.js        # Next.js Server Actions (CRUD)
@@ -93,9 +93,17 @@ nextjs-todo-app/
 ├── validations/
 │   └── todo-schema.js             # Zod validation schema
 │
+├── e2e/
+│   ├── helpers.js                 # Shared test helpers
+│   ├── todo-crud.spec.js          # Playwright: CRUD, filters, persistence
+│   ├── security.spec.js           # Playwright: XSS/SQLi, validation edge-cases
+│   └── theme.spec.js              # Playwright: dark/light toggle
+│
 ├── .env                           # Environment variables (not committed)
 ├── eslint.config.mjs
+├── knip.json                      # Knip config (path aliases, test tooling)
 ├── next.config.mjs
+├── playwright.config.js           # Playwright config (runs on port 3100)
 ├── postcss.config.mjs
 ├── components.json                # shadcn/ui config
 └── package.json
@@ -135,6 +143,17 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 5. Run the tests and checks
+
+```bash
+npm run test:e2e   # Playwright suite — CRUD, security edge-cases, theme (desktop + mobile)
+npx knip           # Finds unused dependencies, files, and exports (exit 0 = clean)
+```
+
+**How e2e tests work** — they hit the same Neon dev DB (`.env.local`) but on port **3100**, so the dev server can keep :3000. Each todo gets an `E2E-` prefix and is deleted after its test; `e2e/_cleanup.mjs` manually scrubs any leftovers.
+
+**Security coverage** — injected `<script>` payloads are rendered inert (never executed), SQL-injection strings are stored as literal text, and Zod validation is enforced end-to-end: empty titles are blocked, over-long descriptions (>200 chars) are rejected with no partial write.
 
 ---
 
