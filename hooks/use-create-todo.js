@@ -19,7 +19,7 @@ export function useCreateTodo() {
 
     onSuccess: () => {
       // 🔥 REFETCH TODOS
-      queryClient.invalidateQueries(["todos"]);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }
